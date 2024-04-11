@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// Função para verificar se uma palavra é um palíndromo
+int isPalindrome(char *word) {
+    int length = strlen(word);
+    for (int i = 0; i < length / 2; i++) {
+        if (tolower(word[i]) != tolower(word[length - i - 1])) {
+            return 0; // Não é um palíndromo
+        }
+    }
+    return 1; // É um palíndromo
+}
+
+int main() {
+    char frase[1000];
+    printf("Digite uma frase: ");
+    fgets(frase, 1000, stdin);
+    
+    // Definindo os artigos e preposições que serão ignorados
+    char *artigos_preposicoes[] = {"o", "a", "os", "as", "um", "uma", "uns", "umas", "de", "do", "da", "dos", "das", "para", "por", "com", "sem", "em", "entre", "sobre", "sob", "atrás", "depois", "diante", "na", "no", "nas", "nos", "até", "ante", "perante", "entre", "contra", "desde", "durante", "até", "atras", "ante", "sob", "sobre", "contra", "para", "por", "com", "sem", "em", "até", "da", "do", "das", "dos", "de", "como"};
+    int num_artigos_preposicoes = sizeof(artigos_preposicoes) / sizeof(artigos_preposicoes[0]);
+
+    // Separando a frase em palavras e verificando se são palíndromos
+    char *token = strtok(frase, " \n\t.,;!?-");
+    printf("Palíndromos encontrados na frase (desconsiderando artigos e preposições):\n");
+    while (token != NULL) {
+        int ignore = 0;
+        // Verificando se a palavra é um artigo ou preposição
+        for (int i = 0; i < num_artigos_preposicoes; i++) {
+            if (strcasecmp(token, artigos_preposicoes[i]) == 0) {
+                ignore = 1;
+                break;
+            }
+        }
+        if (!ignore && isPalindrome(token)) {
+            printf("%s\n", token);
+        }
+        token = strtok(NULL, " \n\t.,;!?-");
+    }
+    return 0;
+}
