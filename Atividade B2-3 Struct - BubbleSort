@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <string.h>
+ 
+#define MAX_ALUNOS 50
+ 
+typedef struct {
+    char nome[50];
+    double nota;
+} Aluno;
+ 
+void incluirAluno(Aluno alunos[], int *count);
+void listarAlunos(Aluno alunos[], int count);
+void bubbleSort(Aluno alunos[], int count);
+ 
+int main() {
+    Aluno alunos[MAX_ALUNOS];
+    int count = 0;
+    int opcao;
+ 
+    do {
+        printf("Menu:\n");
+        printf("1. Incluir aluno\n");
+        printf("2. Listar alunos\n");
+        printf("3. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+        getchar(); // Limpar o buffer do teclado
+ 
+        switch (opcao) {
+            case 1:
+                incluirAluno(alunos, &count);
+                break;
+            case 2:
+                listarAlunos(alunos, count);
+                break;
+            case 3:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida. Tente novamente.\n");
+        }
+    } while (opcao != 3);
+ 
+    return 0;
+}
+ 
+void incluirAluno(Aluno alunos[], int *count) {
+    if (*count >= MAX_ALUNOS) {
+        printf("Limite de alunos atingido.\n");
+        return;
+    }
+ 
+    printf("Digite o nome do aluno: ");
+    fgets(alunos[*count].nome, sizeof(alunos[*count].nome), stdin);
+    alunos[*count].nome[strcspn(alunos[*count].nome, "\n")] = '\0'; // Remover o \n do final
+ 
+    printf("Digite a nota do aluno: ");
+    scanf("%lf", &alunos[*count].nota);
+    getchar(); // Limpar o buffer do teclado
+ 
+    (*count)++;
+}
+ 
+void listarAlunos(Aluno alunos[], int count) {
+    if (count == 0) {
+        printf("Nenhum aluno cadastrado.\n");
+        return;
+    }
+ 
+    bubbleSort(alunos, count);
+ 
+    printf("Lista de alunos:\n");
+    for (int i = 0; i < count; i++) {
+        printf("Nome: %s, Nota: %.2f, Situacao: %s\n",
+               alunos[i].nome,
+               alunos[i].nota,
+               alunos[i].nota >= 6.0 ? "Aprovado" : "Reprovado");
+    }
+}
+ 
+void bubbleSort(Aluno alunos[], int count) {
+    Aluno temp;
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (strcmp(alunos[j].nome, alunos[j + 1].nome) > 0) {
+                temp = alunos[j];
+                alunos[j] = alunos[j + 1];
+                alunos[j + 1] = temp;
+            }
+        }
+    }
+}
