@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_PRODUCTS 100
+#define NAME_LEN 50
+#define DESC_LEN 100
+
+// Definição da estrutura do produto
+typedef struct {
+    int id;
+    char name[NAME_LEN];
+    char description[DESC_LEN];
+    float price;
+    int quantity;
+} Product;
+
+// Funções para o programa
+void insertProduct(Product *products, int *productCount);
+void listProducts(Product *products, int productCount);
+void buyProduct(Product *products, int productCount);
+void bubbleSort(Product *products, int productCount);
+void swapProducts(Product *a, Product *b);
+
+int main() {
+    Product products[MAX_PRODUCTS];
+    int productCount = 0;
+    int option;
+
+    while (1) {
+        printf("Menu:\n");
+        printf("1. Inserir produto\n");
+        printf("2. Listar produtos\n");
+        printf("3. Comprar produto\n");
+        printf("4. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &option);
+
+        switch (option) {
+            case 1:
+                insertProduct(products, &productCount);
+                break;
+            case 2:
+                listProducts(products, productCount);
+                break;
+            case 3:
+                buyProduct(products, productCount);
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Opcao invalida! Tente novamente.\n");
+        }
+    }
+
+    return 0;
+}
+
+void insertProduct(Product *products, int *productCount) {
+    if (*productCount >= MAX_PRODUCTS) {
+        printf("Limite de produtos atingido!\n");
+        return;
+    }
+
+    Product *p = &products[*productCount];
+    p->id = *productCount + 1;
+
+    printf("Inserir novo produto:\n");
+    printf("Nome: ");
+    getchar(); // Limpa o buffer do teclado
+    fgets(p->name, NAME_LEN, stdin);
+    p->name[strcspn(p->name, "\n")] = '\0'; // Remove o '\n' do final da string
+
+    printf("Descricao: ");
+    fgets(p->description, DESC_LEN, stdin);
+    p->description[strcspn(p->description, "\n")] = '\0'; // Remove o '\n' do final da string
+
+    printf("Preco: ");
+    scanf("%f", &p->price);
+
+    printf("Quantidade em estoque: ");
+    scanf("%d", &p->quantity);
+
+    (*productCount)++;
+    bubbleSort(products, *productCount); // Ordena a lista de produtos após a inserção
+}
+
+void listProducts(Product *products, int productCount) {
+    printf("Lista de produtos:\n");
+    for (int i = 0; i < productCount; i++) {
+        Product *p = &products[i];
+        printf("ID: %d\n", p->id);
+        printf("Nome: %s\n", p->name);
+        printf("Descricao: %s\n", p->description);
+        printf("Preco: %.2f\n", p->price);
+        printf("Quantidade em estoque: %d\n", p->quantity);
+        printf("---------------------------\n");
+    }
+}
+
+void buyProduct(Product *products, int productCount) {
+    int id, quantity;
+
+    printf("Comprar produto:\n");
+    printf("Digite o ID do produto: ");
+    scanf("%d", &id);
+
+    Product *p = NULL;
+    for (int i = 0; i < productCount; i++) {
+        if (products[i].id == id) {
+            p = &products[i];
+            break;
+        }
+    }
+
+    if (p == NULL) {
+        printf("Produto inexistente!\n");
+        return;
+    }
+
+    printf("Digite a quantidade que deseja comprar: ");
+    scanf("%d", &quantity);
+
+    if (quantity > p->quantity) {
+        printf("Quantidade em estoque insuficiente!\n");
+    } else {
+        p->quantity -= quantity;
+        printf("Compra realizada com sucesso!\n");
+    }
+}
+
+void bubbleSort(Product *products, int productCount) {
+    for (int i = 0; i < productCount - 1; i++) {
+        for (int j = 0; j < productCount - i - 1; j++) {
+            if (strcmp(products[j].name, products[j + 1].name) > 0) {
+                swapProducts(&products[j], &products[j + 1]);
+            }
+        }
+    }
+}
+
+void swapProducts(Product *a, Product *b) {
+    Product temp = *a;
+    *a = *b;
+    *b = temp;
+}
